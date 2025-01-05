@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARD Manager</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="intro-animation">
+        <div class="logo-animation">
+            <span class="logo-icon">🚀</span>
+            <h1>ARD Manager</h1>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <main class="main-content">
+            <!-- Home Screen -->
+            <div class="screen active" id="homeScreen">
+                <div class="screen-header">
+                    <h2>ARD Manager</h2>
+                    <button id="themeToggle" class="theme-btn">
+                        <span class="light-icon">☀️</span>
+                        <span class="dark-icon">🌙</span>
+                    </button>
+                </div>
+
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-icon">📊</span>
+                        <span class="stat-value" id="totalAirdrops">0</span>
+                        <span class="stat-label">Total Airdrops</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">⭐</span>
+                        <span class="stat-value" id="todayAirdrops">0</span>
+                        <span class="stat-label">Today's Airdrops</span>
+                    </div>
+                </div>
+
+                <div class="recent-airdrops">
+                    <div class="section-header">
+                        <h3>Recent Airdrops</h3>
+                        <button class="btn-text" onclick="showScreen('exploreScreen')">View All →</button>
+                    </div>
+                    <div id="recentAirdrops" class="recent-list"></div>
+                </div>
+            </div>
+
+            <!-- Explore Screen -->
+            <div class="screen" id="exploreScreen">
+                <div class="screen-header">
+                    <h2>Explore</h2>
+                    <div class="header-actions">
+                        <div class="search-container">
+                            <input type="text" id="searchAirdrops" placeholder="Search airdrops...">
+                            <span class="search-icon">🔍</span>
+                        </div>
+                        <button id="viewModeToggle" class="btn-icon">
+                            <span class="grid-icon">📱</span>
+                            <span class="list-icon">📋</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <select id="sortDrops" class="sort-select">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="az">A-Z</option>
+                        <option value="za">Z-A</option>
+                        <option value="popular">Most Popular</option>
+                    </select>
+                    <div class="tags-container" id="tagsContainer"></div>
+                </div>
+
+                <div class="airdrops-container" id="airdropsContainer"></div>
+                <div class="pagination" id="pagination"></div>
+            </div>
+
+            <!-- Add Screen -->
+            <div class="screen" id="addScreen">
+                <div class="screen-header">
+                    <h2>Add Airdrop</h2>
+                </div>
+                <form id="airdropForm" class="airdrop-form">
+                    <div class="input-group">
+                        <label for="airdropName">Name</label>
+                        <input type="text" id="airdropName" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="airdropLink">Link</label>
+                        <input type="url" id="airdropLink" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="airdropTags">Tags</label>
+                        <input type="text" id="airdropTags" placeholder="NFT, DeFi, Gaming">
+                    </div>
+                    <button type="submit" class="btn-primary">Add Airdrop</button>
+                </form>
+            </div>
+
+            <!-- Settings Screen -->
+            <div class="screen" id="settingsScreen">
+                <div class="screen-header">
+                    <h2>Settings</h2>
+                </div>
+                <div class="settings-list">
+                    <div class="settings-section">
+                        <div class="settings-item">
+                            <span>Join Channel</span>
+                            <a href="https://t.me/ArdManagerOfficial" class="btn-link" target="_blank">Join →</a>
+                        </div>
+                        <div class="settings-item">
+                            <span>Version</span>
+                            <span class="version-number">1.0.0</span>
+                        </div>
+                        <div class="settings-item danger-zone">
+                            <span>Reset All Data</span>
+                            <button class="btn-danger" id="resetButton">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-screen="homeScreen">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-item" data-screen="exploreScreen">
+                <span class="nav-icon">🔍</span>
+                <span class="nav-label">Explore</span>
+            </button>
+            <button class="nav-item" data-screen="addScreen">
+                <span class="nav-icon">➕</span>
+                <span class="nav-label">Add</span>
+            </button>
+            <button class="nav-item" data-screen="settingsScreen">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Reset Confirmation Modal -->
+    <div class="modal" id="resetModal">
+        <div class="modal-content">
+            <h3>Reset All Data</h3>
+            <p>This will permanently delete all your saved airdrops. This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancelReset">Cancel</button>
+                <button class="btn-danger" id="confirmReset">Reset All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Airdrop Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <h3>Delete Airdrop</h3>
+            <p>Are you sure you want to delete this airdrop?</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancelDelete">Cancel</button>
+                <button class="btn-danger" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
